@@ -13,7 +13,7 @@ return new class extends Migration
     {
         Schema::create('projects', function (Blueprint $table) {
             $table->id();
-            $table->foreignId('type_id')->constrained('types')->cascadeOnDelete()->cascadeOnUpdate();
+            $table->foreignId('type_id')->constrained('types')->cascadeOnDelete();
             $table->string('title');
             $table->date('creation_date');
             $table->date('contracted_date');
@@ -26,13 +26,13 @@ return new class extends Migration
             $table->integer('services_count')->nullable();
 
 
-            $table->integer('payment_first_step')->nullable();
-            $table->integer('payment_second_step')->nullable();
-            $table->integer('payment_third_step')->nullable();
-            $table->integer('payment_fourth_step')->nullable();
+            $table->decimal('payment_first_step', 10, 2)->nullable();
+            $table->decimal('payment_second_step', 10, 2)->nullable();
+            $table->decimal('payment_third_step', 10, 2)->nullable();
+            $table->decimal('payment_fourth_step', 10, 2)->nullable();
 
             $table->text('comment')->nullable();
-            $table->decimal('efficiency_value', 13, 20)->nullable();
+            $table->decimal('efficiency_value', 5, 2)->nullable();
 
             $table->timestamps();
         });

@@ -8,6 +8,8 @@ class FailedRow extends Model
 {
     protected $table = 'failed_rows';
     protected $fillable = [
-
+        'key',
+        'message',
+        'task_id',
     ];
 }

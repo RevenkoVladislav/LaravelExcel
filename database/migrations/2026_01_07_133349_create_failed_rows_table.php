@@ -15,7 +15,7 @@ return new class extends Migration
             $table->id();
             $table->string('key');
             $table->string('message');
-            $table->foreignId('task_id')->constrained('tasks');
+            $table->foreignId('task_id')->constrained('tasks')->cascadeOnDelete();
             $table->timestamps();
         });
     }
