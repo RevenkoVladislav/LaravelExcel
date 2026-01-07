@@ -8,6 +8,22 @@ class Project extends Model
 {
     protected $table = 'projects';
     protected $fillable = [
-
+        'type_id',
+        'title',
+        'creation_date',
+        'contracted_date',
+        'deadline',
+        'is_chain',
+        'is_on_time',
+        'has_outsource',
+        'has_investors',
+        'workers_count',
+        'services_count',
+        'payment_first_step',
+        'payment_second_step',
+        'payment_third_step',
+        'payment_fourth_step',
+        'comment',
+        'efficiency_value',
     ];
 }
