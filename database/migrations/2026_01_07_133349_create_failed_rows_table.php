@@ -13,6 +13,9 @@ return new class extends Migration
     {
         Schema::create('failed_rows', function (Blueprint $table) {
             $table->id();
+            $table->string('key');
+            $table->string('message');
+            $table->foreignId('task_id')->constrained('tasks');
             $table->timestamps();
         });
     }
