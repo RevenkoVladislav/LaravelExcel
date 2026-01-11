@@ -19,7 +19,7 @@ class File extends Model
      * Сохраняем данные о файле в бд
      * Возвращаем путь к файлу
      */
-    public static function putAndCreate($file)
+    public static function putAndCreate($dataFile)
     {
         $file = Storage::disk('public')->putFile('files/', $dataFile);
 
