@@ -29,10 +29,15 @@ export default {
         },
 
         /**
-         *
+         * Создаем пустую виртуальную форму
+         * кладем в эту форму файл с названием file
+         * Отправляем форму на сервер
          */
         importExcel() {
-            console.log(111);
+            const formData = new FormData();
+            formData.append('file', this.excelFile);
+
+            this.$inertia.post('/projects/import', formData);
         },
     }
 }
@@ -51,7 +56,9 @@ export default {
                 <button @click.prevent="importExcel" class="block rounded-full w-32 text-center text-white p-2 bg-gradient-to-r from-sky-500 to-sky-600 hover:bg-gradient-to-bl">Import</button>
             </div>
         </div>
-
+        <div v-if="$page.props.errors.file" class="text-sm text-red-500 mt-2">
+            {{ $page.props.errors.file }}
+        </div>
     </div>
 </template>
 
