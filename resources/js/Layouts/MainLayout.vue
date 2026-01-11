@@ -1,35 +1,27 @@
 <script>
 import { Link } from '@inertiajs/vue3';
+import Navigation from "@/Components/Navigation.vue";
 
 export default {
     name: "MainLayout",
-    components: { Link }
+    components: {
+        Link,
+        Navigation,
+    }
 }
 </script>
 
 <template>
-    <div class="w-96 mx-auto">
-        <h1>My app</h1>
+    <div class="w-full mx-auto">
+        <!-- Навигационное меню -->
+        <Navigation></Navigation>
+        <!-- Конец навигационного меню -->
 
-        <!-- Навигационные ссылки -->
-        <div
-            class="hidden space-x-8 sm:-my-px sm:ms-10 sm:flex"
-        >
-            <Link :href="route('dashboard')">
-                Dashboard
-            </Link>
-            <Link :href="route('project.index')">
-                Projects
-            </Link>
-            <Link :href="route('project.import')">
-                Import
-            </Link>
-            <Link :href="route('task.index')">
-                Tasks
-            </Link>
+        <!-- Вывод контента из Pages -->
+        <div class="w-4/6 mx-auto">
+            <slot />
         </div>
-
-        <slot />
+        <!-- Конец вывода контента из Pages -->
     </div>
 </template>
 
