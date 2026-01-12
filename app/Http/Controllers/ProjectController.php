@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Http\Requests\Project\ImportStoreRequest;
+use App\Jobs\ImportExcelFileJob;
 use App\Models\File;
 use App\Services\FileStorageService;
 use Illuminate\Http\Request;
@@ -22,9 +23,12 @@ class ProjectController extends Controller
 
     /**
      * Сохранение файла через сервис
+     * Выполняем Job для чтение excel файла
      */
     public function importStore(ImportStoreRequest $request, FileStorageService $service)
     {
         $file = $service->storeUploadedFile($request->file('file'));
+
+        ImportExcelFileJob::dispatchSync($file->path);
     }
 }
