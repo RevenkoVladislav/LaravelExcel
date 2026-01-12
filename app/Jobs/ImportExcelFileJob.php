@@ -18,7 +18,6 @@ class ImportExcelFileJob implements ShouldQueue
         $this->path = $path;
     }
 
-
     public function handle(): void
     {
         Excel::import(new ExcelImport(), $this->path, 'public');
