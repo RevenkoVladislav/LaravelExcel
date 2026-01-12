@@ -13,22 +13,4 @@ class File extends Model
         'extension',
         'filename',
     ];
-
-    /**
-     * Сохраняем файл в Storage
-     * Сохраняем данные о файле в бд
-     * Возвращаем путь к файлу
-     */
-    public static function putAndCreate($dataFile)
-    {
-        $file = Storage::disk('public')->putFile('files/', $dataFile);
-
-        File::create([
-            'path' => $file,
-            'extension' => $dataFile->getClientOriginalExtension(),
-            'filename' => $dataFile->getClientOriginalName(),
-        ]);
-
-        return $file;
-    }
 }
