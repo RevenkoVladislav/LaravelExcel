@@ -4,6 +4,7 @@ namespace App\Imports;
 
 use App\Models\Project;
 use App\Models\Type;
+use Carbon\Carbon;
 use Illuminate\Support\Collection;
 use Maatwebsite\Excel\Concerns\ToCollection;
 use Maatwebsite\Excel\Concerns\WithHeadingRow;
@@ -15,8 +16,12 @@ class ExcelImport implements ToCollection, WithHeadingRow
      * Получаем названия из таблицы Types
      *
      * Проходимся по строкам в загруженном файле
-     * Если у нас пустая строка - наименование, то продолжаем проходить по файлу
-     * Создаем запись в бд прокинув туда все данные из файла
+     * Если поле - наименование - пустое, то продолжить (нужно чтобы в бд не попали пустые строки)
+     *
+     * Создаем запись в бд прокинув туда следующие данные:
+     * Получаем id для Type
+     * Преобразовываем дату в нужный формат
+     * Преобразовываем да/нет в true/false
      */
 
     public function collection(Collection $collection)
@@ -29,9 +34,9 @@ class ExcelImport implements ToCollection, WithHeadingRow
             Project::create([
                 'type_id' => $this->getTypeId($typesMap, $row['tip']),
                 'title' => $row['naimenovanie'],
-                'creation_date' => Date::excelToDateTimeObject($row['data_sozdaniia']),
-                'contracted_date' => Date::excelToDateTimeObject($row['podpisanie_dogovora']),
-                'deadline' => isset($row['dedlain']) ? Date::excelToDateTimeObject($row['dedlain']) : null,
+                'creation_date' => $this->getDate($row['data_sozdaniia']),
+                'contracted_date' => $this->getDate($row['podpisanie_dogovora']),
+                'deadline' => isset($row['dedlain']) ? $this->getDate($row['dedlain']) : null,
                 'is_chain' => isset($row['setevik']) ? $this->getBool($row['setevik']) : null,
                 'is_on_time' => isset($row['sdaca_v_srok']) ? $this->getBool($row['sdaca_v_srok']) : null,
                 'has_outsource' => isset($row['nalicie_autsorsinga']) ? $this->getBool($row['nalicie_autsorsinga']) : null,
@@ -65,11 +70,18 @@ class ExcelImport implements ToCollection, WithHeadingRow
     /**
      * Проверяем, есть ли тип в таблице Types
      * Если есть - вернем его
-     * Если нет создадим и запросим его id
+     * Если нет создадим и вернем его id
      */
-    private function getTypeId($map, $title)
+    private function getTypeId(array &$map, string $title): int
     {
-        return isset($map[$title]) ? $map[$title] : Type::create(['title' => $title])->id;
+        if (isset($map[$title])){
+            return $map[$title];
+        };
+
+        $type = Type::create(['title' => $title]);
+        $map[$title] = $type->id;
+
+        return $type->id;
     }
 
     /**
@@ -78,5 +90,20 @@ class ExcelImport implements ToCollection, WithHeadingRow
     private function getBool($item): bool
     {
         return $item === "Да" ? true : false;
+    }
+
+    /**
+     * Метод для формирования даты при импорте excel
+     * Если нет значения value то вернем null
+     * Если это число то преобразуем через excelToDate
+     * Если строка - то преобразуем через Carbon
+     */
+    private function getDate($value)
+    {
+        if (!$value) return null;
+
+        return is_numeric($value)
+            ? Date::excelToDateTimeObject($value)
+            : Carbon::parse($value);
     }
 }
