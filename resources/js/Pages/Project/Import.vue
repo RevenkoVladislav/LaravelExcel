@@ -9,6 +9,7 @@ export default {
     data() {
         return {
             excelFile: null,
+            loading: false,
         }
     },
 
@@ -32,12 +33,16 @@ export default {
          * Создаем пустую виртуальную форму
          * кладем в эту форму файл с названием file
          * Отправляем форму на сервер
+         * Управление индикатором загрузки
          */
         importExcel() {
             const formData = new FormData();
+            this.loading = true;
             formData.append('file', this.excelFile);
 
-            this.$inertia.post('/projects/import', formData);
+            this.$inertia.post('/projects/import', formData, {
+                onFinish: () => this.loading = false
+            });
         },
     }
 }
@@ -54,6 +59,7 @@ export default {
             </form>
             <div v-if="excelFile" class="ml-3">
                 <button @click.prevent="importExcel" class="block rounded-full w-32 text-center text-white p-2 bg-gradient-to-r from-sky-500 to-sky-600 hover:bg-gradient-to-bl">Import</button>
+                <div v-if="loading" class="text-center text-sky-600 font-bold">Uploading...</div>
             </div>
         </div>
         <div v-if="$page.props.errors.file" class="text-sm text-red-500 mt-2">

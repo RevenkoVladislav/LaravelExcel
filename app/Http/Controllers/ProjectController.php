@@ -26,6 +26,5 @@ class ProjectController extends Controller
     public function importStore(ImportStoreRequest $request, FileStorageService $service)
     {
         $file = $service->storeUploadedFile($request->file('file'));
-        dd($file->path);
     }
 }
