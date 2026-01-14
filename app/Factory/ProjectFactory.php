@@ -134,4 +134,17 @@ class ProjectFactory
 
         return $result;
     }
+
+    /**
+     * Возвращаем уникальные ключи для защиты от дублирования
+     */
+    public function getUniqueKeys(): array
+    {
+        return [
+            'type_id' => $this->typeId,
+            'title' => $this->title,
+            'creation_date' => $this->creationDate,
+            'contracted_date' => $this->contractedDate,
+        ];
+    }
 }

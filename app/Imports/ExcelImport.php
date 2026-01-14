@@ -19,7 +19,8 @@ class ExcelImport implements ToCollection, WithHeadingRow
      * Проходимся по строкам в загруженном файле
      * Если поле - наименование - пустое, то продолжить (нужно чтобы в бд не попали пустые строки)
      *
-     * Проходимся в цикле и вызываем метод make у фабрики
+     * Проходимся в цикле и вызываем метод make у фабрики для создания экземпляра класса по каждой строке
+     * Передаем массив уникальных ключей и массив всех значений в метод updateOrCreate
      */
 
     public function collection(Collection $collection)
@@ -30,7 +31,11 @@ class ExcelImport implements ToCollection, WithHeadingRow
             if (!isset($row['naimenovanie'])) continue;
 
             $projectFactory = ProjectFactory::make($typesMap, $row);
-            dd($projectFactory->getValues());
+
+            Project::updateOrCreate(
+                $projectFactory->getUniqueKeys(),
+                $projectFactory->getValues()
+            );
         }
     }
 
