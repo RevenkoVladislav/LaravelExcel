@@ -56,9 +56,25 @@ class ExcelImport implements ToCollection, WithHeadingRow, WithValidation, Skips
         return $map;
     }
 
+    /**
+     * Собираем все ошибки в массив $map
+     * Проходимся циклом по каждому объекту Failure
+     * Проходимся по всем ошибкам и формируем массив, который попадет в map
+     * В массив попадают аттрибут ошибки, строка где была ошибка, сообщение об ошибке
+     */
     public function onFailure(Failure ...$failures)
     {
-
+        $map = [];
+        foreach ($failures as $failure){
+            foreach ($failure->errors() as $error) {
+                $map[] = [
+                    'key' => $failure->attribute(),
+                    'row' => $failure->row(),
+                    'message' => $error,
+                ];
+            }
+        }
+        dd($map);
     }
 
     /**
@@ -69,7 +85,7 @@ class ExcelImport implements ToCollection, WithHeadingRow, WithValidation, Skips
         return [
             'tip' => 'required|string',
             'naimenovanie' => 'required|string',
-            'data_sozdaniia' => 'required|integer',
+            'data_sozdaniia' => 'required|string',
             'podpisanie_dogovora' => 'required|integer',
             'dedlain' => 'nullable|integer',
             'setevik' => 'nullable|string',
