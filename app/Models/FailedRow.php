@@ -16,8 +16,6 @@ class FailedRow extends Model
 
     public static function insertFailedRows(array $rows): void
     {
-        foreach ($rows as $row) {
-            FailedRow::create($row);
-        }
+        FailedRow::insert($rows);
     }
 }
