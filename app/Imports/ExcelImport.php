@@ -8,6 +8,7 @@ use App\Models\Project;
 use App\Models\Type;
 use Carbon\Carbon;
 use Illuminate\Support\Collection;
+use Illuminate\Support\Facades\Log;
 use Maatwebsite\Excel\Concerns\SkipsOnFailure;
 use Maatwebsite\Excel\Concerns\ToCollection;
 use Maatwebsite\Excel\Concerns\WithHeadingRow;
@@ -25,21 +26,32 @@ class ExcelImport implements ToCollection, WithHeadingRow, WithValidation, Skips
      *
      * Проходимся в цикле и вызываем метод make у фабрики для создания экземпляра класса по каждой строке
      * Передаем массив уникальных ключей и массив всех значений в метод updateOrCreate
+     *
+     * Защита от непредвиденных ошибок с логированием
      */
 
-    public function collection(Collection $collection)
+    public function collection(Collection $collection): void
     {
-        $typesMap = $this->getTypesMap(Type::all());
+        try {
+            $typesMap = $this->getTypesMap(Type::all());
 
-        foreach ($collection as $row) {
-            if (!isset($row['naimenovanie'])) continue;
+            foreach ($collection as $row) {
+                if (!isset($row['naimenovanie'])) {
+                    continue;
+                }
 
-            $projectFactory = ProjectFactory::make($typesMap, $row);
+                $projectFactory = ProjectFactory::make($typesMap, $row);
 
-            Project::updateOrCreate(
-                $projectFactory->getUniqueKeys(),
-                $projectFactory->getValues()
-            );
+                Project::updateOrCreate(
+                    $projectFactory->getUniqueKeys(),
+                    $projectFactory->getValues()
+                );
+            }
+        } catch (\Throwable $exception) {
+            Log::error('Excel import failed', [
+                'exception' => $exception,
+            ]);
+            throw $exception;
         }
     }
 
