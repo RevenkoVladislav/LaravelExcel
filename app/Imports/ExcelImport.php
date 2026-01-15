@@ -7,11 +7,14 @@ use App\Models\Project;
 use App\Models\Type;
 use Carbon\Carbon;
 use Illuminate\Support\Collection;
+use Maatwebsite\Excel\Concerns\SkipsOnFailure;
 use Maatwebsite\Excel\Concerns\ToCollection;
 use Maatwebsite\Excel\Concerns\WithHeadingRow;
+use Maatwebsite\Excel\Concerns\WithValidation;
+use Maatwebsite\Excel\Validators\Failure;
 use PhpOffice\PhpSpreadsheet\Shared\Date;
 
-class ExcelImport implements ToCollection, WithHeadingRow
+class ExcelImport implements ToCollection, WithHeadingRow, WithValidation, SkipsOnFailure
 {
     /**
      * Получаем названия из таблицы Types
@@ -51,5 +54,36 @@ class ExcelImport implements ToCollection, WithHeadingRow
         }
 
         return $map;
+    }
+
+    public function onFailure(Failure ...$failures)
+    {
+
+    }
+
+    /**
+     * правила валидации для excel import
+     */
+    public function rules(): array
+    {
+        return [
+            'tip' => 'required|string',
+            'naimenovanie' => 'required|string',
+            'data_sozdaniia' => 'required|integer',
+            'podpisanie_dogovora' => 'required|integer',
+            'dedlain' => 'nullable|integer',
+            'setevik' => 'nullable|string',
+            'nalicie_autsorsinga' => 'nullable|string',
+            'nalicie_investorov' => 'nullable|string',
+            'sdaca_v_srok' => 'nullable|string',
+            'vlozenie_v_pervyi_etap' => 'nullable|integer',
+            'vlozenie_vo_vtoroi_etap' => 'nullable|integer',
+            'vlozenie_v_tretii_etap' => 'nullable|integer',
+            'vlozenie_v_cetvertyi_etap' => 'nullable|integer',
+            'kolicestvo_ucastnikov' => 'nullable|integer',
+            'kolicestvo_uslug' => 'nullable|integer',
+            'kommentarii' => 'nullable|string',
+            'znacenie_effektivnosti' => 'nullable|numeric',
+        ];
     }
 }

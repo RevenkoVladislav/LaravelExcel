@@ -89,7 +89,7 @@ class ProjectFactory
             return $map[$title];
         };
 
-        $type = Type::create(['title' => $title]);
+        $type = Type::firstOrCreate(['title' => $title]);
         $map[$title] = $type->id;
 
         return $type->id;
