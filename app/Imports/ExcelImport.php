@@ -3,6 +3,7 @@
 namespace App\Imports;
 
 use App\Factory\ProjectFactory;
+use App\Models\FailedRow;
 use App\Models\Project;
 use App\Models\Type;
 use Carbon\Carbon;
@@ -71,10 +72,14 @@ class ExcelImport implements ToCollection, WithHeadingRow, WithValidation, Skips
                     'key' => $failure->attribute(),
                     'row' => $failure->row(),
                     'message' => $error,
+                    'task_id' => 1, //временное решение, пока не реализована сущность task
                 ];
             }
         }
-        dd($map);
+
+        if (!empty($map)) {
+            FailedRow::insertFailedRows($map);
+        }
     }
 
     /**
@@ -85,7 +90,7 @@ class ExcelImport implements ToCollection, WithHeadingRow, WithValidation, Skips
         return [
             'tip' => 'required|string',
             'naimenovanie' => 'required|string',
-            'data_sozdaniia' => 'required|string',
+            'data_sozdaniia' => 'required|integer',
             'podpisanie_dogovora' => 'required|integer',
             'dedlain' => 'nullable|integer',
             'setevik' => 'nullable|string',

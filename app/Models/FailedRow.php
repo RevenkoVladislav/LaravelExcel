@@ -9,7 +9,15 @@ class FailedRow extends Model
     protected $table = 'failed_rows';
     protected $fillable = [
         'key',
+        'row',
         'message',
         'task_id',
     ];
+
+    public static function insertFailedRows(array $rows): void
+    {
+        foreach ($rows as $row) {
+            FailedRow::create($row);
+        }
+    }
 }
