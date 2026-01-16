@@ -5,6 +5,7 @@ namespace App\Imports;
 use App\Factory\ProjectFactory;
 use App\Models\FailedRow;
 use App\Models\Project;
+use App\Models\Task;
 use App\Models\Type;
 use Carbon\Carbon;
 use Illuminate\Support\Collection;
@@ -18,6 +19,10 @@ use PhpOffice\PhpSpreadsheet\Shared\Date;
 
 class ExcelImport implements ToCollection, WithHeadingRow, WithValidation, SkipsOnFailure
 {
+    public function __construct(
+        private Task $task
+    ) {}
+
     /**
      * Получаем названия из таблицы Types
      *
@@ -29,7 +34,6 @@ class ExcelImport implements ToCollection, WithHeadingRow, WithValidation, Skips
      *
      * Защита от непредвиденных ошибок с логированием
      */
-
     public function collection(Collection $collection): void
     {
         try {
@@ -96,13 +100,13 @@ class ExcelImport implements ToCollection, WithHeadingRow, WithValidation, Skips
                     'key' => $readableAttribute,
                     'row' => $failure->row(),
                     'message' => "Row - {$failure->row()}: поле «{$readableAttribute}»: $error",
-                    'task_id' => 1, //временное решение, пока не реализована сущность task
+                    'task_id' => $this->task->id,
                 ];
             }
         }
 
         if (!empty($errorsMap)) {
-            FailedRow::insertFailedRows($errorsMap);
+            FailedRow::insertFailedRows($errorsMap, $this->task);
         }
     }
 
@@ -114,7 +118,7 @@ class ExcelImport implements ToCollection, WithHeadingRow, WithValidation, Skips
         return [
             'tip' => 'required|string',
             'naimenovanie' => 'required|string',
-            'data_sozdaniia' => 'required|numeric',
+            'data_sozdaniia' => 'required|string',
             'podpisanie_dogovora' => 'required|numeric',
             'dedlain' => 'nullable|numeric',
             'setevik' => 'nullable|string',

@@ -12,4 +12,8 @@ class Task extends Model
         'file_id',
         'status',
     ];
+
+    const STATUS_PROCESS = 1;
+    const STATUS_SUCCESS = 2;
+    const STATUS_ERROR = 3;
 }
