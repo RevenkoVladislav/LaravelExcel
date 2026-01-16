@@ -21,7 +21,7 @@ class TaskResource extends JsonResource
             'id' => $this->id,
             'user' => new UserResource($this->user),
             'file' => new FileResource($this->file),
-            'status' => Task::getStatus()[$this->status],
+            'status' => $this->status_label,
         ];
     }
 }
