@@ -7,6 +7,7 @@ use App\Models\FailedRow;
 use App\Models\Project;
 use App\Models\Task;
 use App\Models\Type;
+use App\Services\ImportFailureService;
 use Carbon\Carbon;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\Log;
@@ -20,7 +21,7 @@ use PhpOffice\PhpSpreadsheet\Shared\Date;
 class ExcelImport implements ToCollection, WithHeadingRow, WithValidation, SkipsOnFailure
 {
     public function __construct(
-        private Task $task
+        private Task $task,
     ) {}
 
     /**
@@ -84,7 +85,7 @@ class ExcelImport implements ToCollection, WithHeadingRow, WithValidation, Skips
      * Проходимся по всем ошибкам и формируем массив, который попадет в errorsMap
      * В массив попадают аттрибут ошибки, строка где была ошибка, сообщение об ошибке
      *
-     * Если массив errorsMap не пустой то проводим массовую вставку в бд
+     * Если массив errorsMap не пустой то проводим массовую вставку в бд через сервис
      */
     public function onFailure(Failure ...$failures): void
     {
@@ -106,7 +107,7 @@ class ExcelImport implements ToCollection, WithHeadingRow, WithValidation, Skips
         }
 
         if (!empty($errorsMap)) {
-            FailedRow::insertFailedRows($errorsMap, $this->task);
+            ImportFailureService::insertFailedRows($this->task, $errorsMap);
         }
     }
 
