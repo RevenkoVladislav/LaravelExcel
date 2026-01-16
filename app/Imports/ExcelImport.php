@@ -70,27 +70,39 @@ class ExcelImport implements ToCollection, WithHeadingRow, WithValidation, Skips
     }
 
     /**
-     * Собираем все ошибки в массив $map
+     * Собираем все ошибки в массив $errorsMap
+     *
+     * Получаем все аттрибуты в $attributes для корректной записи в БД
+     * В первом цикле получает значение аттрибута в котором произошла ошибка
+     * Если он есть в кастомном массиве значений то берем его иначе берем системное название
+     *
      * Проходимся циклом по каждому объекту Failure
-     * Проходимся по всем ошибкам и формируем массив, который попадет в map
+     * Проходимся по всем ошибкам и формируем массив, который попадет в errorsMap
      * В массив попадают аттрибут ошибки, строка где была ошибка, сообщение об ошибке
+     *
+     * Если массив errorsMap не пустой то проводим массовую вставку в бд
      */
     public function onFailure(Failure ...$failures): void
     {
-        $map = [];
+        $errorsMap = [];
+        $attributes = $this->attributeMap();
+
         foreach ($failures as $failure){
+            $attributeKey = $failure->attribute();
+            $readableAttribute = $attributes[$attributeKey] ?? $attributeKey;
+
             foreach ($failure->errors() as $error) {
-                $map[] = [
-                    'key' => $failure->attribute(),
+                $errorsMap[] = [
+                    'key' => $readableAttribute,
                     'row' => $failure->row(),
-                    'message' => "Row - {$failure->row()}: $error",
+                    'message' => "Row - {$failure->row()}: поле «{$readableAttribute}»: $error",
                     'task_id' => 1, //временное решение, пока не реализована сущность task
                 ];
             }
         }
 
-        if (!empty($map)) {
-            FailedRow::insertFailedRows($map);
+        if (!empty($errorsMap)) {
+            FailedRow::insertFailedRows($errorsMap);
         }
     }
 
@@ -102,7 +114,7 @@ class ExcelImport implements ToCollection, WithHeadingRow, WithValidation, Skips
         return [
             'tip' => 'required|string',
             'naimenovanie' => 'required|string',
-            'data_sozdaniia' => 'required|numeric',
+            'data_sozdaniia' => 'required|string',
             'podpisanie_dogovora' => 'required|numeric',
             'dedlain' => 'nullable|numeric',
             'setevik' => 'nullable|string',
@@ -117,6 +129,32 @@ class ExcelImport implements ToCollection, WithHeadingRow, WithValidation, Skips
             'kolicestvo_uslug' => 'nullable|integer',
             'kommentarii' => 'nullable|string',
             'znacenie_effektivnosti' => 'nullable|numeric',
+        ];
+    }
+
+    /**
+     * Получаем корректные названия аттрибутов для записи в бд
+     */
+    private function attributeMap(): array
+    {
+        return [
+            'tip' => 'Тип',
+            'naimenovanie' => 'Наименование',
+            'data_sozdaniia' => 'Дата создания',
+            'podpisanie_dogovora' => 'Подписание договора',
+            'dedlain' => 'Дедлайн',
+            'setevik' => 'Сетевик',
+            'nalicie_autsorsinga' => 'Наличие аутсорсинга',
+            'nalicie_investorov' => 'Наличие инвесторов',
+            'sdaca_v_srok' => 'Сдача в срок',
+            'vlozenie_v_pervyi_etap' => 'Вложение в первый этап',
+            'vlozenie_vo_vtoroi_etap' => 'Вложение во второй этап',
+            'vlozenie_v_tretii_etap' => 'Вложение в третий этап',
+            'vlozenie_v_cetvertyi_etap' => 'Вложение в четвертый этап',
+            'kolicestvo_ucastnikov' => 'Количество участников',
+            'kolicestvo_uslug' => 'Количество услуг',
+            'kommentarii' => 'Комментарий',
+            'znacenie_effektivnosti' => 'Значение эффективности',
         ];
     }
 }
