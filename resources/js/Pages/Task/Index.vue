@@ -33,6 +33,7 @@ export default {
                         </thead>
                         <tbody class="bg-white dark:bg-gray-800">
                         <tr v-for="task in tasks" :key="task.id">
+                            <pre>{{task}}</pre>
                             <td class="border-b border-gray-100 p-4 pl-8 text-gray-500 dark:border-gray-700 dark:text-gray-400">
                                 {{ task.user.data.name }}
                             </td>
