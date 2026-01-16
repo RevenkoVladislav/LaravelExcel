@@ -4,49 +4,31 @@ namespace App\Factory;
 
 use App\Models\Type;
 use Carbon\Carbon;
+use Illuminate\Support\Collection;
 use Illuminate\Support\Str;
 use PhpOffice\PhpSpreadsheet\Shared\Date;
 
 class ProjectFactory
 {
-    private $typeId;
-    private $title;
-    private $creationDate;
-    private $contractedDate;
-    private $deadline;
-    private $isChain;
-    private $isOnTime;
-    private $hasOutsource;
-    private $hasInvestors;
-    private $workersCount;
-    private $servicesCount;
-    private $paymentFirstStep;
-    private $paymentSecondStep;
-    private $paymentThirdStep;
-    private $paymentFourthStep;
-    private $comment;
-    private $efficiencyValue;
-
-    public function __construct($typeId, $title, $creationDate, $contractedDate, $deadline, $isChain, $isOnTime, $hasOutsource, $hasInvestors, $workersCount, $servicesCount, $paymentFirstStep, $paymentSecondStep, $paymentThirdStep, $paymentFourthStep, $comment, $efficiencyValue)
-    {
-        $this->typeId = $typeId;
-        $this->title = $title;
-        $this->creationDate = $creationDate;
-        $this->contractedDate = $contractedDate;
-        $this->deadline = $deadline;
-        $this->isChain = $isChain;
-        $this->isOnTime = $isOnTime;
-        $this->hasOutsource = $hasOutsource;
-        $this->hasInvestors = $hasInvestors;
-        $this->workersCount = $workersCount;
-        $this->servicesCount = $servicesCount;
-        $this->paymentFirstStep = $paymentFirstStep;
-        $this->paymentSecondStep = $paymentSecondStep;
-        $this->paymentThirdStep = $paymentThirdStep;
-        $this->paymentFourthStep = $paymentFourthStep;
-        $this->comment = $comment;
-        $this->efficiencyValue = $efficiencyValue;
-    }
+    public function __construct(
+        private int                   $typeId,
+        private string                $title,
+        private Carbon|\DateTime      $creationDate,
+        private Carbon|\DateTime      $contractedDate,
+        private null|Carbon|\DateTime $deadline,
+        private ?bool                 $isChain,
+        private ?bool                 $isOnTime,
+        private ?bool                 $hasOutsource,
+        private ?bool                 $hasInvestors,
+        private ?int                  $workersCount,
+        private ?int                  $servicesCount,
+        private ?float                $paymentFirstStep,
+        private ?float                $paymentSecondStep,
+        private ?float                $paymentThirdStep,
+        private ?float                $paymentFourthStep,
+        private ?string               $comment,
+        private ?float                $efficiencyValue,
+    ) {}
 
     /**
      * Прокидываем массив наименований типов из таблицы Types, и row из Excel импорт
@@ -55,7 +37,7 @@ class ProjectFactory
      * Преобразовываем дату в нужный формат
      * Преобразовываем да/нет в true/false
      */
-    public static function make($map, $row): ProjectFactory
+    public static function make(array $map, Collection $row): ProjectFactory
     {
         return new self(
             self::getTypeId($map, $row['tip']),
@@ -85,7 +67,7 @@ class ProjectFactory
      */
     private static function getTypeId(array &$map, string $title): int
     {
-        if (isset($map[$title])){
+        if (isset($map[$title])) {
             return $map[$title];
         };
 
@@ -101,7 +83,7 @@ class ProjectFactory
      * Если это число то преобразуем через excelToDate
      * Если строка - то преобразуем через Carbon
      */
-    private static function getDate($value)
+    private static function getDate($value): null|Carbon|\DateTime
     {
         if (!$value) return null;
 
@@ -115,7 +97,7 @@ class ProjectFactory
      */
     private static function getBool($item): bool
     {
-        return $item === "Да" ? true : false;
+        return $item === "Да";
     }
 
     /**

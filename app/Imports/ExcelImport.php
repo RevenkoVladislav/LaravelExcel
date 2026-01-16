@@ -114,7 +114,7 @@ class ExcelImport implements ToCollection, WithHeadingRow, WithValidation, Skips
         return [
             'tip' => 'required|string',
             'naimenovanie' => 'required|string',
-            'data_sozdaniia' => 'required|string',
+            'data_sozdaniia' => 'required|numeric',
             'podpisanie_dogovora' => 'required|numeric',
             'dedlain' => 'nullable|numeric',
             'setevik' => 'nullable|string',
