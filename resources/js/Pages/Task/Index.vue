@@ -13,35 +13,41 @@ export default {
 
 <template>
     <div>
-        Task Index
         <div class="mt-4 -mb-3" v-if="tasks.length > 0">
-            <div class="not-prose overflow-auto rounded-lg bg-white outline outline-white/5 dark:bg-gray-950/50">
-                <div class="my-8 overflow-hidden">
+            <div class="overflow-auto rounded-xl bg-white border border-gray-200 shadow-sm">
+                <div class="overflow-hidden">
                     <table class="w-full table-auto border-collapse text-sm">
                         <thead>
-                        <tr>
-                            <th class="border-b border-gray-200 p-4 pt-0 pb-3 pl-8 text-left font-medium text-gray-400 dark:border-gray-600 dark:text-gray-200">
+                        <tr class="bg-gray-50">
+                            <th class="border-b border-gray-200 p-4 text-left font-semibold text-gray-600">
                                 User
                             </th>
-                            <th class="border-b border-gray-200 p-4 pt-0 pb-3 text-left font-medium text-gray-400 dark:border-gray-600 dark:text-gray-200">
+                            <th class="border-b border-gray-200 p-4 text-left font-semibold text-gray-600">
                                 File
                             </th>
-                            <th class="border-b border-gray-200 p-4 pt-0 pr-8 pb-3 text-left font-medium text-gray-400 dark:border-gray-600 dark:text-gray-200">
+                            <th class="border-b border-gray-200 p-4 text-left font-semibold text-gray-600">
                                 Status
                             </th>
                         </tr>
                         </thead>
-                        <tbody class="bg-white dark:bg-gray-800">
-                        <tr v-for="task in tasks" :key="task.id">
-                            <pre>{{task}}</pre>
-                            <td class="border-b border-gray-100 p-4 pl-8 text-gray-500 dark:border-gray-700 dark:text-gray-400">
-                                {{ task.user.data.name }}
+                        <tbody class="divide-y divide-gray-100 bg-white">
+                        <tr v-for="task in tasks" :key="task.id" class="hover:bg-gray-50 transition-colors">
+                            <td class="p-4 pl-6 text-gray-700">
+                                {{ task.user.data.name || '-' }}
                             </td>
-                            <td class="border-b border-gray-100 p-4 text-gray-500 dark:border-gray-700 dark:text-gray-400">
-                                {{ task.file.data.path }}
+                            <td class="p-4 text-gray-600 font-mono text-xs text-left">
+                                {{ task.file.data.path || '-' }}
                             </td>
-                            <td class="border-b border-gray-100 p-4 pr-8 text-gray-500 dark:border-gray-700 dark:text-gray-400">
+                            <td class="p-4 text-left">
+                                <span
+                                    class="inline-flex items-center rounded-md px-2 py-1 text-xs font-medium ring-1 ring-inset"
+                                    :class="{
+                                            'bg-blue-50 text-blue-700 ring-blue-600/20' : task.status.includes('в процессе'),
+                                            'bg-green-50 text-green-700 ring-green-600/20' : task.status.includes('успешно'),
+                                            'bg-red-50 text-red-700 ring-red-600/20' : task.status.includes('Ошибка')
+                                        }">
                                 {{ task.status }}
+                                </span>
                             </td>
                         </tr>
                         </tbody>
@@ -55,3 +61,4 @@ export default {
 <style scoped>
 
 </style>
+
