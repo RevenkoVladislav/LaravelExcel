@@ -28,6 +28,9 @@ export default {
                             <th class="border-b border-gray-200 p-4 text-left font-semibold text-gray-600">
                                 Status
                             </th>
+                            <th class="border-b border-gray-200 p-4 text-left font-semibold text-gray-600">
+                                Failed rows
+                            </th>
                         </tr>
                         </thead>
                         <tbody class="divide-y divide-gray-100 bg-white">
@@ -42,9 +45,9 @@ export default {
                                 <span
                                     class="inline-flex items-center rounded-md px-2 py-1 text-xs font-medium ring-1 ring-inset"
                                     :class="{
-                                            'bg-blue-50 text-blue-700 ring-blue-600/20' : task.status.includes('в процессе'),
-                                            'bg-green-50 text-green-700 ring-green-600/20' : task.status.includes('успешно'),
-                                            'bg-red-50 text-red-700 ring-red-600/20' : task.status.includes('Ошибка')
+                                            'bg-blue-50 text-blue-700 ring-blue-600/20' : task.status.includes('in progress'),
+                                            'bg-green-50 text-green-700 ring-green-600/20' : task.status.includes('imported successfully'),
+                                            'bg-red-50 text-red-700 ring-red-600/20' : task.status.includes('Error during import')
                                         }">
                                 {{ task.status }}
                                 </span>

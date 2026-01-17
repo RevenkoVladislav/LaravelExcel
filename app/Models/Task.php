@@ -22,9 +22,9 @@ class Task extends Model
      * Массив для понятного названия статуса
      */
     public const STATUS_LABELS = [
-        self::STATUS_PROCESS => 'Импорт в процессе обработки',
-        self::STATUS_SUCCESS => 'Импорт данных успешно прошел',
-        self::STATUS_ERROR => 'Ошибка во время импорта',
+        self::STATUS_PROCESS => 'Import in progress',
+        self::STATUS_SUCCESS => 'Data imported successfully',
+        self::STATUS_ERROR => 'Error during import',
     ];
 
     /**
@@ -32,7 +32,7 @@ class Task extends Model
      */
     public function getStatusLabelAttribute(): string
     {
-        return self::STATUS_LABELS[$this->status] ?? 'Неизвестный статус';
+        return self::STATUS_LABELS[$this->status] ?? 'Unknown status';
     }
 
     public function user(): BelongsTo

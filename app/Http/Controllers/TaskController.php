@@ -2,7 +2,9 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Resources\Task\FailedRowResource;
 use App\Http\Resources\Task\TaskResource;
+use App\Models\FailedRow;
 use App\Models\Task;
 use Illuminate\Http\Request;
 
@@ -19,7 +21,20 @@ class TaskController extends Controller
         $tasks = TaskResource::collection($tasks)->resolve();
 
         return inertia('Task/Index', [
-            'tasks' => $tasks
+            'tasks' => $tasks,
+        ]);
+    }
+
+    /**
+     *
+     */
+    public function failedList(Task $task)
+    {
+        $failedList = FailedRow::with('task_id')->get();
+        $failedList = FailedRowResource::collection($failedList)->resolve();
+
+        return inertia('Task/FailedList', [
+            'failedRows' => $failedList,
         ]);
     }
 }
