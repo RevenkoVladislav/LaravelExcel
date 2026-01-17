@@ -1,5 +1,6 @@
 <script>
 import MainLayout from "@/Layouts/MainLayout.vue";
+import { Link } from '@inertiajs/vue3';
 
 export default {
     name: "Index",
@@ -8,6 +9,10 @@ export default {
     props: [
         'tasks',
     ],
+
+    components: {
+        Link,
+    },
 }
 </script>
 
@@ -51,6 +56,9 @@ export default {
                                         }">
                                 {{ task.status }}
                                 </span>
+                            </td>
+                            <td class="p-4 text-gray-600 font-mono text-xs text-left">
+                                <Link class="text-sky-500" :href="route('task.failedList', task.id)">Failed Row</Link>
                             </td>
                         </tr>
                         </tbody>

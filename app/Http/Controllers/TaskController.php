@@ -30,11 +30,11 @@ class TaskController extends Controller
      */
     public function failedList(Task $task)
     {
-        $failedList = FailedRow::with('task_id')->get();
+        $failedList = FailedRow::with('task')->get();
         $failedList = FailedRowResource::collection($failedList)->resolve();
 
         return inertia('Task/FailedList', [
-            'failedRows' => $failedList,
+            'failedList' => $failedList,
         ]);
     }
 }

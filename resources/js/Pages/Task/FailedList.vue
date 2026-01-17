@@ -1,5 +1,6 @@
 <script>
 import MainLayout from "@/Layouts/MainLayout.vue";
+import { Link } from '@inertiajs/vue3';
 
 export default {
     name: "FailedList",
@@ -8,12 +9,19 @@ export default {
     props: [
         'failedList',
     ],
+
+    components: {
+        Link,
+    },
 }
 </script>
 
 <template>
     <div>
-        <div class="mt-4 -mb-3" v-if="faliedList.length > 0">
+        <div>
+            <Link class="text-sm" :href="route('task.index')">Back</Link>
+        </div>
+        <div class="mt-4 -mb-3" v-if="failedList.length > 0">
             <div class="overflow-auto rounded-xl bg-white border border-gray-200 shadow-sm">
                 <div class="overflow-hidden">
                     <table class="w-full table-auto border-collapse text-sm">
@@ -57,7 +65,7 @@ export default {
                                 </span>
                             </td>
                             <td class="p-4 text-center text-gray-700">
-                                {{ failed.data.task.id || '-' }}
+                                {{ failed.task_id || '-' }}
                             </td>
                             <td class="p-4 text-center text-gray-700">
                                 {{ failed.date || '-' }}
