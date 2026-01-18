@@ -22,7 +22,7 @@ export default {
             <Link class="text-sm" :href="route('task.index')">Back</Link>
         </div>
         <div class="mt-4 -mb-3" v-if="failedList.length > 0">
-            <div class="overflow-auto rounded-xl bg-white border border-gray-200 shadow-sm">
+            <div class="overflow-auto rounded-xl bg-white border border-gray-200 shadow-sm mb-10">
                 <div class="overflow-hidden">
                     <table class="w-full table-auto border-collapse text-sm">
                         <thead>

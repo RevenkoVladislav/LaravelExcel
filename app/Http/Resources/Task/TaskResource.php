@@ -22,6 +22,7 @@ class TaskResource extends JsonResource
             'user' => new UserResource($this->user),
             'file' => new FileResource($this->file),
             'status' => $this->status_label,
+            'failed_rows_count' => $this->failed_rows_count,
         ];
     }
 }

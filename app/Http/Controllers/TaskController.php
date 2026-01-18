@@ -17,7 +17,7 @@ class TaskController extends Controller
      */
     public function index()
     {
-        $tasks = Task::with(['user', 'file'])->get();
+        $tasks = Task::with(['user', 'file'])->withCount('failedRows')->get();
         $tasks = TaskResource::collection($tasks)->resolve();
 
         return inertia('Task/Index', [

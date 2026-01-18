@@ -58,7 +58,7 @@ export default {
                                 </span>
                             </td>
                             <td class="p-4 text-gray-600 font-mono text-xs text-left">
-                                <Link class="text-sky-500" :href="route('task.failedList', task.id)">Failed Row</Link>
+                                <Link v-if="task.failed_rows_count > 0" class="text-sky-500" :href="route('task.failedList', task.id)">Failed Row</Link>
                             </td>
                         </tr>
                         </tbody>
