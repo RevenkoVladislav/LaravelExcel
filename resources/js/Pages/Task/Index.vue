@@ -2,6 +2,7 @@
 import MainLayout from "@/Layouts/MainLayout.vue";
 import { Link } from '@inertiajs/vue3';
 import { Head } from '@inertiajs/vue3';
+import Pagination from "@/Components/Pagination.vue";
 
 export default {
     name: "Index",
@@ -14,6 +15,7 @@ export default {
     components: {
         Link,
         Head,
+        Pagination,
     },
 }
 </script>
@@ -21,7 +23,7 @@ export default {
 <template>
     <Head title="Tasks" />
     <div class="py-6">
-        <div class="overflow-hidden rounded-xl border border-gray-200 bg-white shadow-sm" v-if="tasks.length > 0">
+        <div class="overflow-hidden rounded-xl border border-gray-200 bg-white shadow-sm" v-if="tasks.data.length > 0">
                 <div class="overflow-hidden">
                     <table class="w-full table-auto border-collapse text-sm text-left">
                         <thead>
@@ -33,15 +35,15 @@ export default {
                         </tr>
                         </thead>
                         <tbody class="divide-y divide-gray-100">
-                        <tr v-for="task in tasks" :key="task.id" class="hover:bg-gray-50 transition-colors">
+                        <tr v-for="task in tasks.data" :key="task.id" class="hover:bg-gray-50 transition-colors">
                             <td class="px-6 py-4">
                                 <div class="font-medium text-gray-900">
-                                    {{ task.user.data.name || '-' }}
+                                    {{ task.user.name || '-' }}
                                 </div>
                             </td>
                             <td class="px-6 py-4 max-w-xs">
                                 <div class="truncate font-mono text-xs text-gray-500">
-                                    {{ task.file.data.path || '-' }}
+                                    {{ task.file.path || '-' }}
                                 </div>
                             </td>
                             <td class="px-6 py-4">
@@ -72,6 +74,9 @@ export default {
                         </tbody>
                     </table>
                 </div>
+            <div>
+                <Pagination :meta="tasks.meta"></Pagination>
+            </div>
             </div>
 
         <div v-else class="text-center py-12 border-2 border-dashed border-gray-200 rounded-xl">

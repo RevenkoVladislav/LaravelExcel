@@ -2,6 +2,7 @@
 import MainLayout from "@/Layouts/MainLayout.vue";
 import { Link } from '@inertiajs/vue3';
 import { Head } from '@inertiajs/vue3';
+import Pagination from "@/Components/Pagination.vue";
 
 export default {
     name: "FailedList",
@@ -14,6 +15,7 @@ export default {
     components: {
         Link,
         Head,
+        Pagination,
     },
 }
 </script>
@@ -33,7 +35,7 @@ export default {
             </Link>
         </div>
 
-        <div v-if="failedList.length > 0" class="overflow-hidden rounded-xl border border-gray-200 bg-white shadow-sm">
+        <div v-if="failedList.data.length > 0" class="overflow-hidden rounded-xl border border-gray-200 bg-white shadow-sm">
             <div class="overflow-x-auto">
                 <table class="w-full table-auto border-collapse text-sm text-left">
                     <thead>
@@ -45,7 +47,7 @@ export default {
                     </tr>
                     </thead>
                     <tbody class="divide-y divide-gray-100">
-                    <tr v-for="failed in failedList" :key="failed.id" class="hover:bg-red-50/30 transition-colors">
+                    <tr v-for="failed in failedList.data" :key="failed.id" class="hover:bg-red-50/30 transition-colors">
                         <td class="px-6 py-4 text-gray-400 font-mono text-xs">
                             #{{ failed.id }}
                         </td>
@@ -71,6 +73,9 @@ export default {
                     </tr>
                     </tbody>
                 </table>
+            </div>
+            <div>
+                <Pagination :meta="failedList.meta"></Pagination>
             </div>
         </div>
 
