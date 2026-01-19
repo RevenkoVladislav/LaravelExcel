@@ -39,7 +39,6 @@ export default {
                         <th class="px-6 py-4 font-semibold text-gray-900 w-24">Row</th>
                         <th class="px-6 py-4 font-semibold text-gray-900">Field (Key)</th>
                         <th class="px-6 py-4 font-semibold text-gray-900">Error Message</th>
-                        <th class="px-6 py-4 font-semibold text-gray-900 w-32">Date</th>
                     </tr>
                     </thead>
                     <tbody class="divide-y divide-gray-100">
@@ -48,8 +47,8 @@ export default {
                             #{{ failed.id }}
                         </td>
 
-                        <td class="px-6 py-4">
-                                <span class="inline-flex items-center rounded-md bg-gray-100 px-2 py-1 text-xs font-medium text-gray-600">
+                        <td class="px-5 py-4">
+                                <span class="inline-flex items-center rounded-md bg-gray-100 px-1 py-2 text-xs font-medium text-gray-600">
                                     Row {{ failed.row }}
                                 </span>
                         </td>
@@ -65,10 +64,6 @@ export default {
                                 </svg>
                                 <span class="leading-relaxed">{{ failed.message }}</span>
                             </div>
-                        </td>
-
-                        <td class="px-6 py-4 text-gray-500 whitespace-nowrap">
-                            {{ failed.date || '-' }}
                         </td>
                     </tr>
                     </tbody>
