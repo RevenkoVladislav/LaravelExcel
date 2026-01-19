@@ -14,8 +14,6 @@ class FailedRowResource extends JsonResource
             'key' => $this->key,
             'row' => $this->row,
             'message' => $this->message,
-            'task_id' => $this->task->id,
-            'date' => $this->created_at ? $this->created_at->format('Y-m-d') : null,
         ];
     }
 }

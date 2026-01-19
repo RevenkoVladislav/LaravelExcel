@@ -18,23 +18,22 @@ class TaskController extends Controller
     public function index()
     {
         $tasks = Task::with(['user', 'file'])->withCount('failedRows')->get();
-        $tasks = TaskResource::collection($tasks)->resolve();
 
         return inertia('Task/Index', [
-            'tasks' => $tasks,
+            'tasks' => TaskResource::collection($tasks)->resolve(),
         ]);
     }
 
     /**
-     *
+     * Получаем ошибки по конкретному таску
+     * Передаем все на фронт
      */
     public function failedList(Task $task)
     {
-        $failedList = FailedRow::with('task')->get();
-        $failedList = FailedRowResource::collection($failedList)->resolve();
+        $failedList = $task->failedRows()->get();
 
         return inertia('Task/FailedList', [
-            'failedList' => $failedList,
+            'failedList' => FailedRowResource::collection($failedList)->resolve(),
         ]);
     }
 }
