@@ -1,17 +1,20 @@
 <script>
 import { Link } from '@inertiajs/vue3';
 import Navigation from "@/Components/Navigation.vue";
+import { Head } from '@inertiajs/vue3';
 
 export default {
     name: "MainLayout",
     components: {
         Link,
         Navigation,
+        Head,
     }
 }
 </script>
 
 <template>
+    <Head title="Excel" />
     <div class="w-full mx-auto">
         <!-- Навигационное меню -->
         <Navigation></Navigation>

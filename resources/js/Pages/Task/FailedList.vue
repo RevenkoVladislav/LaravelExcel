@@ -1,6 +1,7 @@
 <script>
 import MainLayout from "@/Layouts/MainLayout.vue";
 import { Link } from '@inertiajs/vue3';
+import { Head } from '@inertiajs/vue3';
 
 export default {
     name: "FailedList",
@@ -12,11 +13,13 @@ export default {
 
     components: {
         Link,
+        Head,
     },
 }
 </script>
 
 <template>
+    <Head title="Task Failed" />
     <div class="py-6">
         <div class="mb-6">
             <Link

@@ -17,7 +17,7 @@ class TaskController extends Controller
      */
     public function index()
     {
-        $tasks = Task::with(['user', 'file'])->withCount('failedRows')->get();
+        $tasks = Task::with(['user', 'file'])->withCount('failedRows')->paginate(5);
 
         return inertia('Task/Index', [
             'tasks' => TaskResource::collection($tasks)->resolve(),
@@ -30,7 +30,7 @@ class TaskController extends Controller
      */
     public function failedList(Task $task)
     {
-        $failedList = $task->failedRows()->get();
+        $failedList = $task->failedRows()->paginate(10);
 
         return inertia('Task/FailedList', [
             'failedList' => FailedRowResource::collection($failedList)->resolve(),

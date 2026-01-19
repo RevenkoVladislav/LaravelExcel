@@ -1,6 +1,7 @@
 <script>
 import MainLayout from "@/Layouts/MainLayout.vue";
 import { Link } from '@inertiajs/vue3';
+import { Head } from '@inertiajs/vue3';
 
 export default {
     name: "Index",
@@ -12,11 +13,13 @@ export default {
 
     components: {
         Link,
+        Head,
     },
 }
 </script>
 
 <template>
+    <Head title="Tasks" />
     <div class="py-6">
         <div class="overflow-hidden rounded-xl border border-gray-200 bg-white shadow-sm" v-if="tasks.length > 0">
                 <div class="overflow-hidden">

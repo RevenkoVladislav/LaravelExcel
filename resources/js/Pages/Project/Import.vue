@@ -1,8 +1,14 @@
 <script>
 import MainLayout from "@/Layouts/MainLayout.vue";
+import {Head} from "@inertiajs/vue3";
+
 
 export default {
     name: "Import",
+
+    components: {
+        Head
+    },
 
     layout: MainLayout,
 
@@ -49,6 +55,7 @@ export default {
 </script>
 
 <template>
+    <Head title="Import" />
     <div>
         <h1 class="mb-3">Import</h1>
 
