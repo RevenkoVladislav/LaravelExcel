@@ -3,27 +3,17 @@
 namespace App\Imports;
 
 use App\Factory\ProjectFactory;
-use App\Models\FailedRow;
 use App\Models\Project;
 use App\Models\Task;
 use App\Models\Type;
 use App\Services\ImportFailureService;
-use Carbon\Carbon;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\Log;
-use Maatwebsite\Excel\Concerns\SkipsOnFailure;
-use Maatwebsite\Excel\Concerns\ToCollection;
 use Maatwebsite\Excel\Concerns\WithHeadingRow;
-use Maatwebsite\Excel\Concerns\WithValidation;
 use Maatwebsite\Excel\Validators\Failure;
-use PhpOffice\PhpSpreadsheet\Shared\Date;
 
-class ExcelImport implements ToCollection, WithHeadingRow, WithValidation, SkipsOnFailure
+class ExcelImport extends BaseExcelImport implements WithHeadingRow
 {
-    public function __construct(
-        private Task $task,
-    ) {}
-
     /**
      * Получаем названия из таблицы Types
      *
@@ -61,57 +51,6 @@ class ExcelImport implements ToCollection, WithHeadingRow, WithValidation, Skips
     }
 
     /**
-     * Получаем массив данных из таблицы Types
-     * Где ключ - title из таблицы Types, а значение id из таблицы Types
-     */
-    private function getTypesMap($types): array
-    {
-        $map = [];
-        foreach ($types as $type) {
-            $map[$type->title] = $type->id;
-        }
-
-        return $map;
-    }
-
-    /**
-     * Собираем все ошибки в массив $errorsMap
-     *
-     * Получаем все аттрибуты в $attributes для корректной записи в БД
-     * В первом цикле получает значение аттрибута в котором произошла ошибка
-     * Если он есть в кастомном массиве значений то берем его иначе берем системное название
-     *
-     * Проходимся циклом по каждому объекту Failure
-     * Проходимся по всем ошибкам и формируем массив, который попадет в errorsMap
-     * В массив попадают аттрибут ошибки, строка где была ошибка, сообщение об ошибке
-     *
-     * Если массив errorsMap не пустой то проводим массовую вставку в бд через сервис
-     */
-    public function onFailure(Failure ...$failures): void
-    {
-        $errorsMap = [];
-        $attributes = $this->attributeMap();
-
-        foreach ($failures as $failure){
-            $attributeKey = $failure->attribute();
-            $readableAttribute = $attributes[$attributeKey] ?? $attributeKey;
-
-            foreach ($failure->errors() as $error) {
-                $errorsMap[] = [
-                    'key' => $readableAttribute,
-                    'row' => $failure->row(),
-                    'message' => "Row - {$failure->row()}: поле «{$readableAttribute}»: $error",
-                    'task_id' => $this->task->id,
-                ];
-            }
-        }
-
-        if (!empty($errorsMap)) {
-            ImportFailureService::insertFailedRows($this->task, $errorsMap);
-        }
-    }
-
-    /**
      * правила валидации для excel import
      */
     public function rules(): array
@@ -140,7 +79,7 @@ class ExcelImport implements ToCollection, WithHeadingRow, WithValidation, Skips
     /**
      * Получаем корректные названия аттрибутов для записи в бд
      */
-    private function attributeMap(): array
+    protected function attributeMap(): array
     {
         return [
             'tip' => 'Тип',
