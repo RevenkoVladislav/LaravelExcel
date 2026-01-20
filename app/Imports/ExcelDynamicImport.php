@@ -28,7 +28,7 @@ class ExcelDynamicImport implements ToCollection, WithValidation, SkipsOnFailure
     ) {}
 
     protected const STATIC_ROW = 12;
-    private static array $headers = [];
+    private array $dynamicHeaders = [];
 
     /**
      * Получаем названия из таблицы Types
@@ -69,12 +69,10 @@ class ExcelDynamicImport implements ToCollection, WithValidation, SkipsOnFailure
                     continue;
                 }
 
-                $dynamicHeaders = $this->getRowsMap(self::$headers)['dynamic'];
-
                 foreach ($rowData['dynamic'] as $key => $item) {
                     Payment::updateOrCreate([
                         'project_id' => $project->id,
-                        'title' => $dynamicHeaders[$key],
+                        'title' => $this->dynamicHeaders[$key],
                         'value' => $item,
                     ]);
                 }
@@ -230,9 +228,20 @@ class ExcelDynamicImport implements ToCollection, WithValidation, SkipsOnFailure
      * getDelegate - дает доступ к делегату, т.е к низкоуровневым функциям которые не реализованы в самом пакете (т.е к toArray)
      * toArray - преобразуем в массив
      * [0] - берем только первую строку т.е заголовки
+     *
+     * Проходим по всем элементам массива $headers функцией array_filter
+     * С помощью ARRAY_FILTER_USE_BOTH передаем в анонимную функцию value и key
+     * Фильтруем только если key больше ограничительной константы и не пустое значение value
+     * На выходе получаем отфильтрованный массив где остались колонки которые идут после статичных и имеют значение
      */
-    public static function beforeSheet(BeforeSheet $event): void
+    public function beforeSheet(BeforeSheet $event): void
     {
-        self::$headers = $event->getSheet()->getDelegate()->toArray()[0];
+        $headers = $event->getSheet()->getDelegate()->toArray()[0];
+
+        $this->dynamicHeaders = array_filter(
+            $headers,
+            fn ($value, $key) => $key > self::STATIC_ROW && !empty($value),
+            ARRAY_FILTER_USE_BOTH
+        );
     }
 }
