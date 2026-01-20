@@ -165,54 +165,48 @@ class ExcelDynamicImport implements ToCollection, WithValidation, SkipsOnFailure
 
     /**
      * правила валидации для excel import
+     * Присоединяем динамические значения
      */
     public function rules(): array
     {
-        return [
-//            'tip' => 'required|string',
-//            'naimenovanie' => 'required|string',
-//            'data_sozdaniia' => 'required|numeric',
-//            'podpisanie_dogovora' => 'required|numeric',
-//            'dedlain' => 'nullable|numeric',
-//            'setevik' => 'nullable|string',
-//            'nalicie_autsorsinga' => 'nullable|string',
-//            'nalicie_investorov' => 'nullable|string',
-//            'sdaca_v_srok' => 'nullable|string',
-//            'vlozenie_v_pervyi_etap' => 'nullable|integer',
-//            'vlozenie_vo_vtoroi_etap' => 'nullable|integer',
-//            'vlozenie_v_tretii_etap' => 'nullable|integer',
-//            'vlozenie_v_cetvertyi_etap' => 'nullable|integer',
-//            'kolicestvo_ucastnikov' => 'nullable|integer',
-//            'kolicestvo_uslug' => 'nullable|integer',
-//            'kommentarii' => 'nullable|string',
-//            'znacenie_effektivnosti' => 'nullable|numeric',
-        ];
+        return array_replace([
+            '0' => 'required|string',
+            '1' => 'required|string',
+            '2' => 'required|numeric',
+            '9' => 'required|numeric',
+            '7' => 'nullable|numeric',
+            '3' => 'nullable|string',
+            '5' => 'nullable|string',
+            '6' => 'nullable|string',
+            '8' => 'nullable|string',
+            '4' => 'nullable|integer',
+            '10' => 'nullable|integer',
+            '11' => 'nullable|string',
+            '12' => 'nullable|numeric',
+        ], $this->getDynamicValidation());
     }
 
     /**
      * Получаем корректные названия аттрибутов для записи в бд
+     * Присоединяем массив с динамическими значениями
      */
     private function attributeMap(): array
     {
-        return [
-            'tip' => 'Тип',
-            'naimenovanie' => 'Наименование',
-            'data_sozdaniia' => 'Дата создания',
-            'podpisanie_dogovora' => 'Подписание договора',
-            'dedlain' => 'Дедлайн',
-            'setevik' => 'Сетевик',
-            'nalicie_autsorsinga' => 'Наличие аутсорсинга',
-            'nalicie_investorov' => 'Наличие инвесторов',
-            'sdaca_v_srok' => 'Сдача в срок',
-            'vlozenie_v_pervyi_etap' => 'Вложение в первый этап',
-            'vlozenie_vo_vtoroi_etap' => 'Вложение во второй этап',
-            'vlozenie_v_tretii_etap' => 'Вложение в третий этап',
-            'vlozenie_v_cetvertyi_etap' => 'Вложение в четвертый этап',
-            'kolicestvo_ucastnikov' => 'Количество участников',
-            'kolicestvo_uslug' => 'Количество услуг',
-            'kommentarii' => 'Комментарий',
-            'znacenie_effektivnosti' => 'Значение эффективности',
-        ];
+        return array_replace([
+            '0' => 'Тип',
+            '1' => 'Наименование',
+            '2' => 'Дата создания',
+            '9' => 'Подписание договора',
+            '7' => 'Дедлайн',
+            '3' => 'Сетевик',
+            '5' => 'Наличие аутсорсинга',
+            '6' => 'Наличие инвесторов',
+            '8' => 'Сдача в срок',
+            '4' => 'Количество участников',
+            '10' => 'Количество услуг',
+            '11' => 'Комментарий',
+            '12' => 'Значение эффективности',
+        ], $this->getDynamicValidation());
     }
 
     /**
@@ -243,5 +237,21 @@ class ExcelDynamicImport implements ToCollection, WithValidation, SkipsOnFailure
             fn ($value, $key) => $key > self::STATIC_ROW && !empty($value),
             ARRAY_FILTER_USE_BOTH
         );
+    }
+
+    /**
+     * Функция для валидации динамической части Excel импорта.
+     * Формируем массив headers
+     * Проходим циклом по всем нашим динамическим заголовками dynamicHeaders
+     * В массив headers записываем валидацию для новых полей
+     */
+    private function getDynamicValidation(): array
+    {
+        $headers = [];
+        foreach ($this->dynamicHeaders as $key => $value) {
+            $headers[$key] = 'required|numeric';
+        }
+
+        return $headers;
     }
 }
