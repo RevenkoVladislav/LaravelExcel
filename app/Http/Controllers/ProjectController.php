@@ -16,7 +16,7 @@ class ProjectController extends Controller
 {
     public function index()
     {
-        $projects = Project::with('type')->paginate(15);
+        $projects = Project::with('type')->paginate(7);
 
         return inertia('Project/Index', [
             'projects' => ProjectResource::collection($projects),
