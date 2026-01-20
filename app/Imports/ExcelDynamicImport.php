@@ -183,7 +183,7 @@ class ExcelDynamicImport implements ToCollection, WithValidation, SkipsOnFailure
             '10' => 'nullable|integer',
             '11' => 'nullable|string',
             '12' => 'nullable|numeric',
-        ], $this->getDynamicValidation());
+        ], $this->getDynamicRules());
     }
 
     /**
@@ -206,7 +206,7 @@ class ExcelDynamicImport implements ToCollection, WithValidation, SkipsOnFailure
             '10' => 'Количество услуг',
             '11' => 'Комментарий',
             '12' => 'Значение эффективности',
-        ], $this->getDynamicValidation());
+        ], $this->getDynamicAttributes());
     }
 
     /**
@@ -241,17 +241,34 @@ class ExcelDynamicImport implements ToCollection, WithValidation, SkipsOnFailure
 
     /**
      * Функция для валидации динамической части Excel импорта.
-     * Формируем массив headers
+     * Формируем массив rules
      * Проходим циклом по всем нашим динамическим заголовками dynamicHeaders
-     * В массив headers записываем валидацию для новых полей
+     * В массив rules записываем валидацию для новых полей
      */
-    private function getDynamicValidation(): array
+    private function getDynamicRules(): array
     {
-        $headers = [];
+        $rules = [];
         foreach ($this->dynamicHeaders as $key => $value) {
-            $headers[$key] = 'required|numeric';
+            $rules[$key] = 'required|numeric';
         }
 
-        return $headers;
+        return $rules;
+    }
+
+    /**
+     * Аналогично методу rules, только для аттрибутов
+     * Формируем массив с аттрибутами,
+     * проходим циклом по dynamicHeaders
+     * формируем аттрибуты по ключу и присваиваем значение
+     * Возвращаем сформированный массив.
+     */
+    private function getDynamicAttributes(): array
+    {
+        $attributes = [];
+        foreach ($this->dynamicHeaders as $key => $value) {
+            $attributes[$key] = $value;
+        }
+
+        return $attributes;
     }
 }
