@@ -3,6 +3,7 @@
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
 class Project extends Model
 {
@@ -26,4 +27,14 @@ class Project extends Model
         'comment',
         'efficiency_value',
     ];
+
+    protected $casts = [
+        'creation_date' => 'date',
+        'contracted_date' => 'date',
+        'deadline' => 'date',
+        ];
+    public function type(): BelongsTo
+    {
+        return $this->belongsTo(Type::class, 'type_id', 'id');
+    }
 }
