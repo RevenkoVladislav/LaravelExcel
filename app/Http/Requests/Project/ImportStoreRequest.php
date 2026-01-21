@@ -15,6 +15,7 @@ class ImportStoreRequest extends FormRequest
     {
         return [
             'file' => 'required|file|mimes:xlsx,xls|max:10240',
+            'import_type' => 'required|integer|in:1,2'
         ];
     }
 }

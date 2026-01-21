@@ -13,6 +13,7 @@ class Task extends Model
         'user_id',
         'file_id',
         'status',
+        'import_type',
     ];
 
     const STATUS_PROCESS = 1;

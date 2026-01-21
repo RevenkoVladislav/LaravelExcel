@@ -16,6 +16,7 @@ export default {
         return {
             excelFile: null,
             loading: false,
+            import_type: 1,
         }
     },
 
@@ -38,16 +39,24 @@ export default {
         /**
          * Создаем пустую виртуальную форму
          * кладем в эту форму файл с названием file
+         * добавляем тип импорта
+         *
          * Отправляем форму на сервер
          * Управление индикатором загрузки
+         * При успехе обнуляем файл и убираем его из инпута
          */
         importExcel() {
             const formData = new FormData();
             this.loading = true;
             formData.append('file', this.excelFile);
+            formData.append('import_type', this.import_type)
 
             this.$inertia.post('/projects/import', formData, {
-                onFinish: () => this.loading = false
+                onFinish: () => this.loading = false,
+                onSuccess: () => {
+                    this.excelFile = null;
+                    this.$refs.file.value = null;
+                }
             });
         },
     }
@@ -61,6 +70,9 @@ export default {
 
         <div class="flex">
             <form>
+                <div class="mr-2">
+                    <input type="number" min="1" max="2" v-model="import_type" class="w-16 rounded-full">
+                </div>
                 <input @change="setExcel" type="file" ref="file" class="hidden">
                 <button @click.prevent="selectExcel" class="block rounded-full w-32 text-center text-white p-2 bg-gradient-to-r from-green-500 to-green-600 hover:bg-gradient-to-bl">Excel</button>
             </form>
