@@ -42,7 +42,6 @@ class ExcelImport extends BaseExcelImport implements WithHeadingRow
 
                 $dto = $this->rowBuilder->build($row);
                 $project = $this->projectFactory->create($dto);
-                dd($project->getFillable());
             }
         } catch (\Throwable $exception) {
             Log::error('Excel import failed', [

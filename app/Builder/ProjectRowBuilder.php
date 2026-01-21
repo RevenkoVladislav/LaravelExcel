@@ -20,6 +20,13 @@ class ProjectRowBuilder
         private BoolParser   $boolParser,
     ) {}
 
+    /**
+     * Создаем DTO для ExcelImpor
+     * Преобразовываем данные в необходимый вид используя парсеры для даты и булева значения
+     * Для записи typeId используем резолвер, который проверяет есть ли данная запись в бд
+     * и если ее нет, то создаст. На период выполнения программы хранит в себе массив cache со всеми type,
+     * чтобы не создавать дубли
+     */
     public function build(Collection $row): ProjectDTO
     {
         return new ProjectDTO(

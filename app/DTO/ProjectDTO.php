@@ -49,6 +49,9 @@ class ProjectDTO
         ];
     }
 
+    /**
+     * Получаем уникальные свойства
+     */
     public function unique(): array
     {
         return [
@@ -57,5 +60,73 @@ class ProjectDTO
             'creation_date' => $this->creationDate,
             'contracted_date' => $this->contractedDate,
         ];
+    }
+
+    /**
+     * Создаем геттеры для всех НЕ уникальных свойств.
+     */
+    public function getDeadline(): null|Carbon|\DateTime
+    {
+        return $this->deadline;
+    }
+
+    public function isChain(): ?bool
+    {
+        return $this->isChain;
+    }
+
+    public function isOnTime(): ?bool
+    {
+        return $this->isOnTime;
+    }
+
+    public function hasOutsource(): ?bool
+    {
+        return $this->hasOutsource;
+    }
+
+    public function hasInvestors(): ?bool
+    {
+        return $this->hasInvestors;
+    }
+
+    public function getWorkersCount(): ?int
+    {
+        return $this->workersCount;
+    }
+
+    public function getServicesCount(): ?int
+    {
+        return $this->servicesCount;
+    }
+
+    public function getPaymentFirstStep(): ?float
+    {
+        return $this->paymentFirstStep;
+    }
+
+    public function getPaymentSecondStep(): ?float
+    {
+        return $this->paymentSecondStep;
+    }
+
+    public function getPaymentThirdStep(): ?float
+    {
+        return $this->paymentThirdStep;
+    }
+
+    public function getPaymentFourthStep(): ?float
+    {
+        return $this->paymentFourthStep;
+    }
+
+    public function getComment(): ?string
+    {
+        return $this->comment;
+    }
+
+    public function getEfficiencyValue(): ?float
+    {
+        return $this->efficiencyValue;
     }
 }
