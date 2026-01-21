@@ -52,62 +52,6 @@ class ProjectDynamicFactory
         );
     }
 
-    /**
-     * Проверяем, есть ли тип в таблице Types
-     * Если есть - вернем его
-     * Если нет создадим и вернем его id
-     */
-    private static function getTypeId(array &$map, string $title): int
-    {
-        if (isset($map[$title])) {
-            return $map[$title];
-        };
-
-        $type = Type::firstOrCreate(['title' => $title]);
-        $map[$title] = $type->id;
-
-        return $type->id;
-    }
-
-    /**
-     * Метод для формирования даты при импорте excel
-     * Если нет значения value то вернем null
-     * Если это число то преобразуем через excelToDate
-     * Если строка - то преобразуем через Carbon
-     */
-    private static function getDate($value): null|Carbon|\DateTime
-    {
-        if (!$value) return null;
-
-        return is_numeric($value)
-            ? Date::excelToDateTimeObject($value)
-            : Carbon::parse($value);
-    }
-
-    /**
-     * Вспомогательный метод, для преобразования из excel файла 'да/нет' в 'true/false'
-     */
-    private static function getBool($item): bool
-    {
-        return $item === "Да";
-    }
-
-    /**
-     * Получаем все свойства у созданного объекта в виде массива
-     * Проходимся в цикле по всем элементам массива
-     * Меняем ключи из camelCase в snake_case стиль
-     */
-    public function getValues(): array
-    {
-        $props = get_object_vars($this);
-        $result = [];
-
-        foreach ($props as $key => $prop) {
-            $result[Str::snake($key)] = $prop;
-        }
-
-        return $result;
-    }
 
     /**
      * Возвращаем уникальные ключи для защиты от дублирования

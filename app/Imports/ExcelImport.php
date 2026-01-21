@@ -2,6 +2,7 @@
 
 namespace App\Imports;
 
+use App\Builder\ProjectRowBuilder;
 use App\Factory\ProjectFactory;
 use App\Models\Project;
 use App\Models\Task;
@@ -14,33 +15,34 @@ use Maatwebsite\Excel\Validators\Failure;
 
 class ExcelImport extends BaseExcelImport implements WithHeadingRow
 {
+    private ProjectRowBuilder $rowBuilder;
+    private ProjectFactory $projectFactory;
+    public function __construct(Task $task)
+    {
+        parent::__construct($task);
+        $this->rowBuilder = app(ProjectRowBuilder::class);
+        $this->projectFactory = app(ProjectFactory::class);
+    }
     /**
-     * Получаем названия из таблицы Types
-     *
      * Проходимся по строкам в загруженном файле
      * Если поле - наименование - пустое, то продолжить (нужно чтобы в бд не попали пустые строки)
      *
-     * Проходимся в цикле и вызываем метод make у фабрики для создания экземпляра класса по каждой строке
-     * Передаем массив уникальных ключей и массив всех значений в метод updateOrCreate
+     * Формируем DTO через билдер
+     * Создаем фабрику, передав данные из DTO
      *
      * Защита от непредвиденных ошибок с логированием
      */
     public function collection(Collection $collection): void
     {
         try {
-            $typesMap = $this->getTypesMap(Type::all());
-
             foreach ($collection as $row) {
                 if (!isset($row['naimenovanie'])) {
                     continue;
                 }
 
-                $projectFactory = ProjectFactory::make($typesMap, $row);
-
-                Project::updateOrCreate(
-                    $projectFactory->getUniqueKeys(),
-                    $projectFactory->getValues()
-                );
+                $dto = $this->rowBuilder->build($row);
+                $project = $this->projectFactory->create($dto);
+                dd($project->getFillable());
             }
         } catch (\Throwable $exception) {
             Log::error('Excel import failed', [
