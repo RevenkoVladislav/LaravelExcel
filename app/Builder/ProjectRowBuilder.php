@@ -12,7 +12,6 @@ class ProjectRowBuilder
 {
     /**
      * Прокидываем резолверы и парсеры для преобразования данных
-     *
      */
     public function __construct(
         private TypeResolver $typeResolver,

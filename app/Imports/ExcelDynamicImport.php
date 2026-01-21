@@ -2,24 +2,34 @@
 
 namespace App\Imports;
 
-use App\Factory\ProjectDynamicFactory;
-use App\Models\Payment;
-use App\Models\Project;
+use App\Builder\PaymentRowBuilder;
+use App\Builder\ProjectDynamicRowBuilder;
+use App\Factory\PaymentFactory;
+use App\Factory\ProjectFactory;
 use App\Models\Task;
-use App\Models\Type;
-use App\Services\ImportFailureService;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\Log;
 use Maatwebsite\Excel\Concerns\RegistersEventListeners;
 use Maatwebsite\Excel\Concerns\WithEvents;
 use Maatwebsite\Excel\Concerns\WithStartRow;
 use Maatwebsite\Excel\Events\BeforeSheet;
-use Maatwebsite\Excel\Validators\Failure;
 
 class ExcelDynamicImport extends BaseExcelImport implements WithStartRow, WithEvents
 {
     use RegistersEventListeners;
 
+    private ProjectFactory $projectFactory;
+    private ProjectDynamicRowBuilder $rowDynamicBuilder;
+    private PaymentFactory $paymentFactory;
+    private PaymentRowBuilder $paymentBuilder;
+    public function __construct(Task $task)
+    {
+        parent::__construct($task);
+        $this->rowDynamicBuilder = app(ProjectDynamicRowBuilder::class);
+        $this->paymentBuilder = app(PaymentRowBuilder::class);
+        $this->projectFactory = app(ProjectFactory::class);
+        $this->paymentFactory = app(PaymentFactory::class);
+    }
     protected const STATIC_ROW = 12;
     private array $dynamicHeaders = [];
 
@@ -29,20 +39,20 @@ class ExcelDynamicImport extends BaseExcelImport implements WithStartRow, WithEv
      * Проходимся по строкам в загруженном файле (начинаем со второй из-за WithStartRow)
      * Если поле - наименование ($row[1] - пустое, то продолжить (нужно чтобы в бд не попали пустые строки)
      *
-     * Получаем массив из статических и динамических свойств Excel файла
-     * Проходимся в цикле и вызываем метод make у фабрики для создания экземпляра класса по каждой строке для статических данных
-     * Передаем массив уникальных ключей и массив всех значений в метод updateOrCreate
+     * Формируем DTO через builder передав ему статические данные
+     * Создаем фабрику передав данные из DTO
      *
-     * Если не пустой массив - $rowData['dynamic'] то проходимся по нему циклом
-     * Через ивент получим заголовки и отфильтруем нулевые заголовки через функцию getRowsMap
-     * Создадим или обновим запись в таблице Payment
+     * Если у нас не пустой массив dynamic данных то
+     * Формируем DTO по платежам, передаем в него динамические данные
+     * id проекта
+     * И заголовки динамических строк
      *
+     * Синхронизируем данне PaymentFactory
      * Защита от непредвиденных ошибок с логированием
      */
     public function collection(Collection $collection): void
     {
         try {
-            $typesMap = $this->getTypesMap(Type::all());
 
             foreach ($collection as $row) {
                 if (!isset($row[1])) {
@@ -51,23 +61,18 @@ class ExcelDynamicImport extends BaseExcelImport implements WithStartRow, WithEv
 
                 $rowData = $this->getRowsMap($row);
 
-                $projectFactory = ProjectDynamicFactory::make($typesMap, $rowData['static']);
+                $projectDto = $this->rowDynamicBuilder->build($rowData['static']);
+                $project = $this->projectFactory->create($projectDto);
 
-                $project = Project::updateOrCreate(
-                    $projectFactory->getUniqueKeys(),
-                    $projectFactory->getValues()
-                );
 
-                if (!isset($rowData['dynamic'])) {
-                    continue;
-                }
+                if (!empty($rowData['dynamic'])) {
+                    $paymentsDtos = $this->paymentBuilder->build(
+                        $rowData['dynamic'],
+                        $project->id,
+                        $this->dynamicHeaders
+                    );
 
-                foreach ($rowData['dynamic'] as $key => $item) {
-                    Payment::updateOrCreate([
-                        'project_id' => $project->id,
-                        'title' => $this->dynamicHeaders[$key],
-                        'value' => $item,
-                    ]);
+                    $this->paymentFactory->sync($paymentsDtos);
                 }
             }
         } catch (\Throwable $exception) {
