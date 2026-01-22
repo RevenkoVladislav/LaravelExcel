@@ -62,7 +62,7 @@ class Project extends Model
                 ($this->payment_fourth_step ?? 0);
             }
 
-        return $this->payments()->sum('value');
+        return $this->payments->sum('value');
     }
 
     /**
