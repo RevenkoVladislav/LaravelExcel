@@ -5,6 +5,7 @@ namespace App\Jobs;
 use App\Imports\ExcelDynamicImport;
 use App\Imports\ExcelImport;
 use App\Models\Task;
+use App\Resolvers\ImportStrategyResolver;
 use App\Services\ImportFailureService;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Foundation\Queue\Queueable;
@@ -24,31 +25,22 @@ class ImportExcelFileJob implements ShouldQueue
     }
 
     /**
+     * Запуск импорта excel файла в систему
+     * Через resolver определяем какой тип импорта будет загружен (статичный или динамичный)
+     *
      * Сюда прокидываем успешный статус
      * В случае ошибки мы его поменяем в ExcelImport и запишем Task с ошибкой
      * т.к ошибки не останавливают импорт, то успешный статус нужно прокинуть именно здесь
      * а в случае ошибки полностью поменять статус для всего Task
      *
-     * Реализовано несколько видов импорта, через условие выбираем какой именно необходимо запустить.
+     * Запускаем импорт
      */
-    public function handle(): void
+    public function handle(ImportStrategyResolver $resolver): void
     {
+        $strategy = $resolver->resolve($this->task->import_type);
+
         $this->task->update(['status' => Task::STATUS_SUCCESS]);
 
-        if ($this->task->import_type == 1) {
-            $this->staticImport();
-        } else {
-            $this->dynamicImport();
-        }
-    }
-
-    public function staticImport(): void
-    {
-        Excel::import(new ExcelImport($this->task), $this->path, 'public');
-    }
-
-    public function dynamicImport(): void
-    {
-        Excel::import(new ExcelDynamicImport($this->task), $this->path, 'public');
+        $strategy->import($this->task, $this->path);
     }
 }

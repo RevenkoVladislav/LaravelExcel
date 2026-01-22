@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use App\Enums\ImportType;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
@@ -14,6 +15,10 @@ class Task extends Model
         'file_id',
         'status',
         'import_type',
+    ];
+
+    protected $casts = [
+        'import_type' => ImportType::class,
     ];
 
     const STATUS_PROCESS = 1;

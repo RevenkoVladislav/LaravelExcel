@@ -2,7 +2,9 @@
 
 namespace App\Http\Requests\Project;
 
+use App\Enums\ImportType;
 use Illuminate\Foundation\Http\FormRequest;
+use Illuminate\Validation\Rule;
 
 class ImportStoreRequest extends FormRequest
 {
@@ -15,7 +17,11 @@ class ImportStoreRequest extends FormRequest
     {
         return [
             'file' => 'required|file|mimes:xlsx,xls|max:10240',
-            'import_type' => 'required|integer|in:1,2'
+            'import_type' => [
+                'required',
+                'string',
+                Rule::enum(ImportType::class),
+            ],
         ];
     }
 }

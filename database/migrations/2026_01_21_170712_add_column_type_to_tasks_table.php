@@ -12,7 +12,7 @@ return new class extends Migration
     public function up(): void
     {
         Schema::table('tasks', function (Blueprint $table) {
-            $table->unsignedBigInteger('import_type')->default(1)->after('status');
+            $table->string('import_type')->default('static')->after('status');
         });
     }
 
