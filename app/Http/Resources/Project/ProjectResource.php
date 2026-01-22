@@ -23,10 +23,7 @@ class ProjectResource extends JsonResource
             'has_investors' => $this->has_investors,
             'workers_count' => $this->workers_count,
             'services_count' => $this->services_count,
-            'payment_first_step' => $this->payment_first_step,
-            'payment_second_step' => $this->payment_second_step,
-            'payment_third_step' => $this->payment_third_step,
-            'payment_fourth_step' => $this->payment_fourth_step,
+            'total_payments' => $this->total_payments,
             'comment' => $this->comment,
             'efficiency_value' => $this->efficiency_value,
         ];

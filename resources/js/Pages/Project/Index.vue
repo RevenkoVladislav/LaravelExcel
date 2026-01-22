@@ -20,18 +20,6 @@ export default {
 
     methods: {
         /**
-         * Считаем сумму всех этапов оплаты
-         * Приводим данные к Number явно, либо берем 0
-         * Суммируем и возвращаем
-         */
-        totalPayments(project) {
-            return (Number(project.payment_first_step) || 0) +
-                (Number(project.payment_second_step) || 0) +
-                (Number(project.payment_third_step) || 0) +
-                (Number(project.payment_fourth_step) || 0);
-        },
-
-        /**
          * Форматируем число в валюту (Рубли)
          * Используем стиль - currency
          * тип валюту - рубли
@@ -168,9 +156,9 @@ export default {
                         <td class="px-6 py-4 text-right whitespace-nowrap">
                             <div class="flex flex-col">
                                     <span class="text-gray-900 font-bold">
-                                        {{ formatCurrency(totalPayments(project)) }}
+                                        {{ formatCurrency(project.total_payments) }}
                                     </span>
-                                <span class="text-[10px] text-gray-400 uppercase">Steps 1-4 summary</span>
+                                <span class="text-[10px] text-gray-400 uppercase">All steps summary</span>
                             </div>
                         </td>
                         <!-- Конец блока с общей суммой вложений -->
