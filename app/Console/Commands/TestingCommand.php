@@ -16,7 +16,7 @@ class TestingCommand extends Command
 
     public function handle()
     {
-        Excel::import(new ExcelDynamicImport(Task::find(8)), 'files/projects2.xlsx', 'public');
+        Excel::import(new ExcelDynamicImport(Task::find(41)), 'files/projects.xlsx', 'public');
         return Command::SUCCESS;
     }
 }

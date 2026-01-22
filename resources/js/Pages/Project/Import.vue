@@ -16,7 +16,7 @@ export default {
         return {
             excelFile: null,
             loading: false,
-            import_type: 1,
+            import_type: 'static',
         }
     },
 
@@ -37,6 +37,8 @@ export default {
         },
 
         /**
+         * Защита, если уже грузим файл - то выходим из метода
+         *
          * Создаем пустую виртуальную форму
          * кладем в эту форму файл с названием file
          * добавляем тип импорта
@@ -46,14 +48,19 @@ export default {
          * При успехе обнуляем файл и убираем его из инпута
          */
         importExcel() {
+            if (this.loading) return;
+
             const formData = new FormData();
             this.loading = true;
             formData.append('file', this.excelFile);
             formData.append('import_type', this.import_type)
 
             this.$inertia.post('/projects/import', formData, {
+                onStart: () => this.loading = true,
                 onFinish: () => this.loading = false,
+                onError: () => this.loading = false,
                 onSuccess: () => {
+                    this.loading = false;
                     this.excelFile = null;
                     this.$refs.file.value = null;
                 }
@@ -71,14 +78,29 @@ export default {
         <div class="flex">
             <form>
                 <div class="mr-2">
-                    <input type="number" min="1" max="2" v-model="import_type" class="w-16 rounded-full">
+                    <select v-model="import_type" class="rounded">
+                        <option value="static">Static import</option>
+                        <option value="dynamic">Dynamic import</option>
+                    </select>
                 </div>
                 <input @change="setExcel" type="file" ref="file" class="hidden">
                 <button @click.prevent="selectExcel" class="block rounded-full w-32 text-center text-white p-2 bg-gradient-to-r from-green-500 to-green-600 hover:bg-gradient-to-bl">Excel</button>
             </form>
             <div v-if="excelFile" class="ml-3">
-                <button @click.prevent="importExcel" class="block rounded-full w-32 text-center text-white p-2 bg-gradient-to-r from-sky-500 to-sky-600 hover:bg-gradient-to-bl">Import</button>
-                <div v-if="loading" class="text-center text-sky-600 font-bold">Uploading...</div>
+                <button
+                    @click.prevent="importExcel"
+                    :disabled="loading"
+                    class="block rounded-full w-32 text-center text-white p-2 transition-all"
+                    :class="[
+                        loading
+                        ? 'bg-gray-400 cursor-not-allowed opacity-70'
+                        : 'bg-gradient-to-r from-gray-600 to-gray-800 hover:bg-gradient-to-bl',
+                    ]"
+                >
+                    <span v-if="loading">Wait...</span>
+                    <span v-else>Import</span>
+                </button>
+                <div v-if="loading" class="text-center text-gray-600 font-bold mt-1">Uploading...</div>
             </div>
         </div>
         <div v-if="$page.props.errors.file" class="text-sm text-red-500 mt-2">
