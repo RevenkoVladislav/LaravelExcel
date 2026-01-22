@@ -30,6 +30,7 @@ export default {
                         <tr class="bg-gray-50/50 border-b border-gray-200">
                             <th class="px-6 py-4 font-semibold text-gray-900">User</th>
                             <th class="px-6 py-4 font-semibold text-gray-900">File Reference</th>
+                            <th class="px-6 py-4 font-semibold text-gray-900">Import type</th>
                             <th class="px-6 py-4 font-semibold text-gray-900">Status</th>
                             <th class="px-6 py-4 font-semibold text-gray-900">Issues</th>
                         </tr>
@@ -45,6 +46,16 @@ export default {
                                 <div class="truncate font-mono text-xs text-gray-500">
                                     {{ task.file.path || '-' }}
                                 </div>
+                            </td>
+                            <td class="px-6 py-4 text-center">
+                                <span
+                                    class="px-2.5 py-1 rounded-md text-[10px] font-bold border uppercase tracking-wider"
+                                    :class="task.import_type === 'static'
+                                    ? 'bg-blue-50 text-blue-700 border-blue-200'
+                                    : 'bg-amber-50 text-amber-700 border-amber-200'"
+                                >
+                                {{ task.import_type || '-' }}
+                                </span>
                             </td>
                             <td class="px-6 py-4">
                                 <span

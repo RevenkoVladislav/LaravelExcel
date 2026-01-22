@@ -23,6 +23,7 @@ class TaskResource extends JsonResource
             'file' => new FileResource($this->file),
             'status' => $this->status_label,
             'failed_rows_count' => $this->failed_rows_count,
+            'import_type' => $this->import_type,
         ];
     }
 }
