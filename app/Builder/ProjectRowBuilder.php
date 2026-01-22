@@ -3,6 +3,7 @@
 namespace App\Builder;
 
 use App\DTO\ProjectDTO;
+use App\Enums\ImportType;
 use App\Parsers\BoolParser;
 use App\Parsers\DateParser;
 use App\Resolvers\TypeResolver;
@@ -46,6 +47,7 @@ class ProjectRowBuilder
             paymentFourthStep: $row['vlozenie_v_cetvertyi_etap'] ?? null,
             comment: $row['kommentarii'] ?? null,
             efficiencyValue: $row['znacenie_effektivnosti'] ?? null,
+            import_type: ImportType::STATIC->value,
         );
     }
 }

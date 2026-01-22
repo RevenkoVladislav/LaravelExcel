@@ -3,6 +3,7 @@
 namespace App\Builder;
 
 use App\DTO\ProjectDTO;
+use App\Enums\ImportType;
 use App\Parsers\BoolParser;
 use App\Parsers\DateParser;
 use App\Resolvers\TypeResolver;
@@ -35,6 +36,7 @@ class ProjectDynamicRowBuilder
             paymentFourthStep: null,
             comment: $row[11] ?? null,
             efficiencyValue: $row[12] ?? null,
+            import_type: ImportType::DYNAMIC->value,
         );
     }
 }

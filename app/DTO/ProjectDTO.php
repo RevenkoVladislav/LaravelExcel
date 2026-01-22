@@ -24,6 +24,7 @@ class ProjectDTO
         private ?float                $paymentFourthStep,
         private ?string               $comment,
         private ?float                $efficiencyValue,
+        private string                $import_type,
     ) {}
 
     public function toArray(): array
@@ -46,6 +47,7 @@ class ProjectDTO
             'paymentFourthStep' => $this->paymentFourthStep,
             'comment' => $this->comment,
             'efficiencyValue' => $this->efficiencyValue,
+            'import_type' => $this->import_type,
         ];
     }
 
@@ -128,5 +130,10 @@ class ProjectDTO
     public function getEfficiencyValue(): ?float
     {
         return $this->efficiencyValue;
+    }
+
+    public function getImportType(): string
+    {
+        return $this->import_type;
     }
 }

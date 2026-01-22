@@ -196,7 +196,7 @@ class ExcelDynamicImport extends BaseExcelImport implements WithStartRow, WithEv
     {
         $rules = [];
         foreach ($this->dynamicHeaders as $key => $value) {
-            $rules[$key] = 'required|numeric';
+            $rules[$key] = 'nullable|numeric';
         }
 
         return $rules;

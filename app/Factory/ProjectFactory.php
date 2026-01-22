@@ -27,6 +27,7 @@ class ProjectFactory
 
                 'comment' => $dto->getComment(),
                 'efficiency_value' => $dto->getEfficiencyValue(),
+                'import_type' => $dto->getImportType(),
             ]
         );
     }

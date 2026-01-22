@@ -2,6 +2,8 @@
 
 namespace App\Models;
 
+use App\Enums\ImportType;
+use App\Http\Resources\Payment\PaymentResource;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
@@ -27,6 +29,7 @@ class Project extends Model
         'payment_fourth_step',
         'comment',
         'efficiency_value',
+        'import_type',
     ];
 
     protected $casts = [
@@ -60,5 +63,28 @@ class Project extends Model
             }
 
         return $this->payments()->sum('value');
+    }
+
+    /**
+     * Метод для формирования массива с деталями по платежам для передачи на фронт с учетом типа импорта
+     * Если динамический импорт то отдаем PaymentResource который преобразуем впростой массив через resolve
+     *
+     * Для статического импорта формируем коллекцию по всем 4 этап платежа
+     * Применяем фильтер, берем только значения value и преобразуем в обычный массив и отдаем на фронт
+     */
+    public function paymentsForView(): array
+    {
+        //динамичный импорт
+        if ($this->import_type === ImportType::DYNAMIC->value) {
+            return PaymentResource::collection($this->payments)->resolve();
+        }
+
+        //статичный импорт
+        return collect([
+            ['title' => 'Этап 1', 'value' => $this->payment_first_step],
+            ['title' => 'Этап 2', 'value' => $this->payment_second_step],
+            ['title' => 'Этап 3', 'value' => $this->payment_third_step],
+            ['title' => 'Этап 4', 'value' => $this->payment_fourth_step],
+        ])->filter(fn ($property) => $property['value'])->values()->toArray();
     }
 }

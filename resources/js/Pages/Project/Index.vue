@@ -2,14 +2,23 @@
 import MainLayout from "@/Layouts/MainLayout.vue";
 import {Head, Link} from "@inertiajs/vue3";
 import Pagination from "@/Components/Pagination.vue";
+import PaymentsModal from "@/Components/PaymentsModal.vue";
 
 export default {
     name: "Index",
 
+    data() {
+        return {
+            showPayments: false,
+            selectedPayments: [],
+        }
+    },
+
     components: {
         Head,
         Pagination,
-        Link
+        Link,
+        PaymentsModal
     },
 
     layout: MainLayout,
@@ -57,6 +66,11 @@ export default {
             const inactive = 'bg-gray-50 text-gray-300 border-gray-100 opacity-60';
 
             return `${base} ${isActive ? (variants[color] || variants.blue) : inactive}`;
+        },
+
+        openPayments(project) {
+            this.selectedPayments = project.payments;
+            this.showPayments = true;
         },
     }
 }
@@ -154,12 +168,17 @@ export default {
 
                         <!-- Блок с общей суммой вложений -->
                         <td class="px-6 py-4 text-right whitespace-nowrap">
-                            <div class="flex flex-col">
-                                    <span class="text-gray-900 font-bold">
+                            <div class="flex flex-col cursor-pointer" @click="openPayments(project)">
+                                    <span class="text-gray-900 font-bold hover:underline">
                                         {{ formatCurrency(project.total_payments) }}
                                     </span>
                                 <span class="text-[10px] text-gray-400 uppercase">All steps summary</span>
                             </div>
+                            <PaymentsModal
+                                :show="showPayments"
+                                :payments="selectedPayments"
+                                @close="showPayments = false"
+                            />
                         </td>
                         <!-- Конец блока с общей суммой вложений -->
 
